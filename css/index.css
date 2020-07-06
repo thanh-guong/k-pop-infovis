@@ -1,0 +1,24 @@
+.upload-container
+{
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1%;
+
+    width: 60%;
+    border: 3px solid #73AD21;
+    padding: 10px;
+
+    text-align: center;
+}
+
+.buttons-container
+{
+    margin-left: auto;
+    margin-right: auto;
+
+    width: 60%;
+    border: 3px solid #73AD21;
+    padding: 10px;
+
+    text-align: center;
+}

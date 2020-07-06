@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/index.css">
+    <title>K-Pop InfoVis project - Marte Valerio Falcone</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+<body>
+    <div>
+        <div class="upload-container">
+            <label for="nodes">Nodes</label>
+            <input id="nodes" type="file" accept="application/json">
+
+            <label for="edges">Edges</label>
+            <input id="edges" type="file" accept="application/json">
+        </div>
+        <div class="buttons-container">
+            <input id="draw" type="button" value="Draw Graph" onclick="draw_graph()">
+        </div>
+    </div>
+
+    <script src="js/k-pop.js"></script>
+</body>
+</html>
