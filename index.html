@@ -4,19 +4,46 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/index.css">
     <title>K-Pop InfoVis project - Marte Valerio Falcone</title>
-    <script src="https://d3js.org/d3.v5.min.js"></script>
+
 </head>
 <body>
-    <div>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+
+    <div class="container">
         <div class="upload-container">
+            <p>Drop here datasets in JSON format</p>
+
             <label for="nodes">Nodes</label>
             <input id="nodes" type="file" accept="application/json">
 
             <label for="edges">Edges</label>
             <input id="edges" type="file" accept="application/json">
         </div>
+
+        <div class="values-container">
+            <p>Write here values</p>
+
+            <label for="k_electrostatic">K electrostatic</label>
+            <input id="k_electrostatic" type="number" value="5">
+
+            <label for="k_elastic">K elastic</label>
+            <input id="k_elastic" type="number" value="400">
+
+            <label for="spring_length">Springs length</label>
+            <input id="spring_length" type="number" value="15">
+
+            <label for="gravity">Gravity</label>
+            <input id="gravity" type="number" value="0.002">
+
+            <label for="iterations">Iterations</label>
+            <input id="iterations" type="number" value="1000">
+        </div>
+
         <div class="buttons-container">
-            <input id="draw" type="button" value="Draw Graph" onclick="draw_graph()">
+
+            <p>Actions</p>
+            <input id="draw" type="button" value="Draw Graph" onclick="drawGraph()">
+
         </div>
     </div>
 

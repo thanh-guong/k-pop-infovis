@@ -21,3 +21,11 @@ My Professor committed me to find out a task that a user can do to visualize the
 - How to intersect the data with the new dataset?
 - What dataset can i choose?
 - Where are the given datasets coming from?
+
+
+## Graph drawing algorithm
+
+The algorithm I chose is a spring embedding described in a paper called "A Heuristic for Graph Drawing" [Eades, 1986].
+Eades presented an algorithm based on physics laws: each linked couple of nodes is under effect of a force.
+This force vector is the sum of the electrostatic repulsion between the couple of nodes, and the force exherted by a spring.
+
