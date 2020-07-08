@@ -93,18 +93,18 @@ function electrostaticRepulsionForAxis(distance_on_axis, total_distance)
     return first_term * (distance_on_axis / total_distance);
 }
 
-function electrostaticRepulsionBetweenTwoNodes(i_node, j_node)
+function electrostaticRepulsionBetweenTwoNodes(i, j)
 {
     // distances
-    let x_distance = i_node.x - j_node.x;
+    let x_distance = nodes[i].x - nodes[j].x;
     x_distance = Math.abs(x_distance);
-    let y_distance = i_node.y - j_node.y;
+    let y_distance = nodes[i].y - nodes[j].y;
     y_distance = Math.abs(y_distance);
     let total_distance = Math.sqrt((x_distance ** 2) + (y_distance ** 2));
 
     // quadratic complexity, i don't need to do this for both i_node and j_node, but only for one (and doesn't matter which one)
-    i_node.delta_x += electrostaticRepulsionForAxis(x_distance, total_distance);
-    i_node.delta_y += electrostaticRepulsionForAxis(y_distance, total_distance);
+    nodes[i].delta_x += electrostaticRepulsionForAxis(x_distance, total_distance);
+    nodes[i].delta_y += electrostaticRepulsionForAxis(y_distance, total_distance);
 }
 
 function electrostaticRepulsion()
@@ -114,15 +114,12 @@ function electrostaticRepulsion()
     {
         for(let j = 0; j < nodes.length; j++)
         {
-            let i_node = nodes[i];
-            let j_node = nodes[j];
-
             // skip if the node is "himself"
-            if(i_node === j_node)
+            if(i === j)
             {
                 continue;
             }
-            electrostaticRepulsionBetweenTwoNodes(i_node, j_node);
+            electrostaticRepulsionBetweenTwoNodes(i, j);
         }
     }
 }
@@ -133,12 +130,12 @@ function hookeLawForAxis(distance_on_axis, total_distance)
     return - ( k_elastic * spring_delta * (distance_on_axis / total_distance))
 }
 
-function springForcesBetweenTwoNodes(i_node, j_node)
+function springForcesBetweenTwoNodes(i, j)
 {
     // distances
-    let x_distance = i_node.x - j_node.x;
+    let x_distance = nodes[i].x - nodes[j].x;
     x_distance = Math.abs(x_distance);
-    let y_distance = i_node.y - j_node.y;
+    let y_distance = nodes[i].y - nodes[j].y;
     y_distance = Math.abs(y_distance);
     let total_distance = Math.sqrt((x_distance ** 2) + (y_distance ** 2));
 
@@ -154,10 +151,10 @@ function springForcesBetweenTwoNodes(i_node, j_node)
         y_distance = 1;
     }
 
-    i_node.delta_x -= hookeLawForAxis(x_distance, total_distance)
-    i_node.delta_y -= hookeLawForAxis(y_distance, total_distance)
-    j_node.delta_x += hookeLawForAxis(x_distance, total_distance)
-    j_node.delta_y += hookeLawForAxis(y_distance, total_distance)
+    nodes[i].delta_x -= hookeLawForAxis(x_distance, total_distance)
+    nodes[i].delta_y -= hookeLawForAxis(y_distance, total_distance)
+    nodes[j].delta_x += hookeLawForAxis(x_distance, total_distance)
+    nodes[j].delta_y += hookeLawForAxis(y_distance, total_distance)
 }
 
 function springForces()
@@ -165,10 +162,14 @@ function springForces()
     // for each edge
     for(let i = 0; i < edges.length; i++)
     {
-        let i_node = edges[i].source;
-        let j_node = edges[i].target;
+        // find related target and source nodes
+        let i_node = nodes.filter(node => node.id === edges[i].source);
+        let j_node = nodes.filter(node => node.id === edges[i].target);
 
-        springForcesBetweenTwoNodes(i_node, j_node);
+        let i = nodes.indexOf(i_node);
+        let j = nodes.indexOf(j_node);
+
+        springForcesBetweenTwoNodes(i, j);
     }
 }
 
