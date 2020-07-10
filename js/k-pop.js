@@ -5,6 +5,8 @@ INTERVAL_MS = 300; // milliseconds
 let nodes = "";
 let edges = "";
 
+let svg;
+
 let nodes_displayed;
 let edges_displayed;
 
@@ -223,17 +225,35 @@ function initializeGlobalVariablesFromDOM()
     gravity = document.getElementById("gravity").value;
 }
 
+function cleanSvgIfDirty()
+{
+    d3.select("#viz").remove();
+    svg = d3
+        .select(".svg-container")
+        .append("svg")
+        .attr("id", "viz")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("style", "border-style: solid;");
+}
+
 /***************************************************
  ******************* MAIN **************************
  ***************************************************/
 
-document.getElementById('nodes').addEventListener('change', readNodes, false);
-document.getElementById('edges').addEventListener('change', readEdges, false);
-
 function drawGraph()
 {
-    filterNodes();
-    filterEdges();
+    if(checkData() !== 0)
+    {
+        return -1;
+    }
+
+    cleanSvgIfDirty();
+    let filteredNodes = filterNodes();
+    let filtered = filterEdges();
+    nodesInitialization();
+    edgesInitialization();
+    initializeGlobalVariablesFromDOM();
 
     var color = d3.scaleOrdinal(d3.schemeCategory10);
 
@@ -274,7 +294,6 @@ function drawGraph()
         return a == b || adjlist[a + "-" + b];
     }
 
-    var svg = d3.select("#viz").attr("width", width).attr("height", height).attr("style", "border-style: solid;");
     var container = svg.append("g");
 
     svg.call(
@@ -321,13 +340,15 @@ function drawGraph()
 
     node.on("mouseover", focus).on("mouseout", unfocus);
 
-    function ticked() {
+    function ticked()
+    {
 
         node.call(updateNode);
         link.call(updateLink);
 
         labelLayout.alphaTarget(0.3).restart();
-        labelNode.each(function(d, i) {
+        labelNode.each(function(d, i)
+        {
             if(i % 2 == 0) {
                 d.x = d.node.x;
                 d.y = d.node.y;
@@ -349,12 +370,14 @@ function drawGraph()
 
     }
 
-    function fixna(x) {
+    function fixna(x)
+    {
         if (isFinite(x)) return x;
         return 0;
     }
 
-    function focus(d) {
+    function focus(d)
+    {
         var index = d3.select(d3.event.target).datum().index;
         node.style("opacity", function(o) {
             return neigh(index, o.index) ? 1 : 0.1;
@@ -367,40 +390,50 @@ function drawGraph()
         });
     }
 
-    function unfocus() {
+    function unfocus()
+    {
         labelNode.attr("display", "block");
         node.style("opacity", 1);
         link.style("opacity", 1);
     }
 
-    function updateLink(link) {
+    function updateLink(link)
+    {
         link.attr("x1", function(d) { return fixna(d.source.x); })
             .attr("y1", function(d) { return fixna(d.source.y); })
             .attr("x2", function(d) { return fixna(d.target.x); })
             .attr("y2", function(d) { return fixna(d.target.y); });
     }
 
-    function updateNode(node) {
+    function updateNode(node)
+    {
         node.attr("transform", function(d) {
             return "translate(" + fixna(d.x) + "," + fixna(d.y) + ")";
         });
     }
 
-    function dragstarted(d) {
+    function dragstarted(d)
+    {
         d3.event.sourceEvent.stopPropagation();
         if (!d3.event.active) graphLayout.alphaTarget(0.3).restart();
         d.fx = d.x;
         d.fy = d.y;
     }
 
-    function dragged(d) {
+    function dragged(d)
+    {
         d.fx = d3.event.x;
         d.fy = d3.event.y;
     }
 
-    function dragended(d) {
+    function dragended(d)
+    {
         if (!d3.event.active) graphLayout.alphaTarget(0);
         d.fx = null;
         d.fy = null;
     }
 }
+
+document.getElementById('nodes').addEventListener('change', readNodes, false);
+document.getElementById('edges').addEventListener('change', readEdges, false);
+document.getElementsByName('values').forEach(value => { value.addEventListener('change', drawGraph, false); })

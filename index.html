@@ -24,19 +24,19 @@
             <p>Write here values</p>
 
             <label for="k_electrostatic">K electrostatic</label>
-            <input id="k_electrostatic" type="number" value="5">
+            <input name="values" id="k_electrostatic" type="number" value="5">
 
             <label for="k_elastic">K elastic</label>
-            <input id="k_elastic" type="number" value="400">
+            <input name="values" id="k_elastic" type="number" value="400">
 
             <label for="spring_length">Springs length</label>
-            <input id="spring_length" type="number" value="15">
+            <input name="values" id="spring_length" type="number" value="15">
 
             <label for="gravity">Gravity</label>
-            <input id="gravity" type="number" value="0.002">
+            <input name="values" id="gravity" type="number" value="0.002">
 
             <label for="iterations">Iterations</label>
-            <input id="iterations" type="number" value="1000">
+            <input name="values" id="iterations" type="number" value="1000">
         </div>
 
         <div class="buttons-container">
@@ -45,8 +45,10 @@
             <input id="draw" type="button" value="Draw Graph" onclick="drawGraph()">
 
         </div>
+        <div class="svg-container">
+            <svg id="viz"></svg>
+        </div>
 
-        <svg id="viz"></svg>
     </div>
 
     <script src="js/k-pop.js"></script>
