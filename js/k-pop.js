@@ -52,13 +52,28 @@ function readEdges(event)
 function filterNodes()
 {
     // filter to get only group nodes
-    nodes = nodes.filter(node => node.type === 'group');
+    return nodes.filter(node => node.type === 'group');
 }
 
-function filterEdges()
+function filterEdges(filteredNodes)
 {
     // filter to get only group-group relationships
-    edges = edges.filter(edge => nodes.filter(node => node.id === edge.source).length > 0 && nodes.filter(node => node.id === edge.target).length > 0);
+    console.log(filteredNodes);
+
+    function existsANodeWithId(id)
+    {
+        let result = false;
+        filteredNodes.forEach(node => {if ( node.id === id ) result = true; })
+        return result;
+    }
+
+    let result = edges.filter
+    (edge =>
+        existsANodeWithId(edge.source) &&
+        existsANodeWithId(edge.target)
+    );
+
+    return result;
 }
 
 function checkData()
@@ -174,49 +189,6 @@ function springForces()
     }
 }
 
-/**********************
- **********************
- * DOM INPUT / OUTPUT *
- **********************
- **********************/
-
-function nodesInitialization()
-{
-    let seed = 1;
-
-    function random()
-    {
-        let x = Math.sin(seed++) * 10000;
-        return x - Math.floor(x);
-    }
-
-    // nodes values initialization
-    for (let i = 0; i < nodes.length; i++)
-    {
-        nodes[i].x = random() * width;
-        nodes[i].y = random() * height;
-        nodes[i].delta_x = 0;
-        nodes[i].delta_y = 0;
-        nodes[i].links = 0;
-        nodes[i].dragging = false;
-        nodes[i].index = i;
-    }
-}
-
-function edgesInitialization()
-{
-    for (let i = 0; i < edges.length; i++)
-    {
-        let source = nodes.find(node => node.id === edges[i].source);
-        let target = nodes.find(node => node.id === edges[i].target);
-
-        edges[i].x1 = source.x;
-        edges[i].y1 = source.y;
-        edges[i].x2 = target.x;
-        edges[i].y2 = target.y;
-    }
-}
-
 function initializeGlobalVariablesFromDOM()
 {
     k_electrostatic = document.getElementById("k_electrostatic").value;
@@ -250,9 +222,16 @@ function drawGraph()
 
     cleanSvgIfDirty();
     let filteredNodes = filterNodes();
-    let filtered = filterEdges();
-    nodesInitialization();
-    edgesInitialization();
+    let filteredEdges = filterEdges(filteredNodes);
+    if(DEBUG)
+    {
+        console.log("Begin debug block");
+        console.log(nodes);
+        console.log(edges);
+        console.log(filteredNodes);
+        console.log(filteredEdges);
+        console.log("End debug block");
+    }
     initializeGlobalVariablesFromDOM();
 
     var color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -262,7 +241,7 @@ function drawGraph()
         'links': []
     };
 
-    nodes.forEach(function(d, i) {
+    filteredNodes.forEach(function(d, i) {
         label.nodes.push({node: d});
         label.nodes.push({node: d});
         label.links.push({
@@ -275,17 +254,17 @@ function drawGraph()
         .force("charge", d3.forceManyBody().strength(-50))
         .force("link", d3.forceLink(label.links).distance(0).strength(2));
 
-    var graphLayout = d3.forceSimulation(nodes)
+    var graphLayout = d3.forceSimulation(filteredNodes)
         .force("charge", d3.forceManyBody().strength(-3000))
         .force("center", d3.forceCenter(width / 2, height / 2))
         .force("x", d3.forceX(width / 2).strength(1))
         .force("y", d3.forceY(height / 2).strength(1))
-        .force("link", d3.forceLink(edges).id(function(d) {return d.id; }).distance(50).strength(1))
+        .force("link", d3.forceLink(filteredEdges).id(function(d) {return d.id; }).distance(50).strength(1))
         .on("tick", ticked);
 
     var adjlist = [];
 
-    edges.forEach(function(d) {
+    filteredEdges.forEach(function(d) {
         adjlist[d.source.index + "-" + d.target.index] = true;
         adjlist[d.target.index + "-" + d.source.index] = true;
     });
@@ -304,7 +283,7 @@ function drawGraph()
 
     var link = container.append("g").attr("class", "links")
         .selectAll("line")
-        .data(edges)
+        .data(filteredEdges)
         .enter()
         .append("line")
         .attr("stroke", "#aaa")
@@ -312,7 +291,7 @@ function drawGraph()
 
     var node = container.append("g").attr("class", "nodes")
         .selectAll("g")
-        .data(nodes)
+        .data(filteredNodes)
         .enter()
         .append("circle")
         .attr("r", 5)
