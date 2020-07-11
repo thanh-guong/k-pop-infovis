@@ -358,4 +358,4 @@ function drawGraph()
 
 document.getElementById('nodes').addEventListener('change', readNodes, false);
 document.getElementById('edges').addEventListener('change', readEdges, false);
-document.getElementsByName('values').forEach(value => { value.addEventListener('change', drawGraph, false); })
+// document.getElementsByName('values').forEach(value => { value.addEventListener('change', drawGraph, false); })
