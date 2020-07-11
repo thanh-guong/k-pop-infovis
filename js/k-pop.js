@@ -12,10 +12,14 @@ let svg;
 let nodes_displayed;
 let edges_displayed;
 
-let k_electrostatic;
-let k_elastic;
-let spring_length;
-let gravity;
+let labelLayoutChargeStrength	// -50
+let labelLayoutLinkStrength		// 2
+let labelLayoutDistance		    // 0
+let graphLayoutChargeStrength	// -3000
+let graphLayoutXStrength		// 1
+let graphLayoutYStrength		// 1
+let graphLayoutLinkStrength		// 1
+let graphLayoutDistance		    // 50
 
 let width = "1200";
 let height = "600";
@@ -101,10 +105,28 @@ function checkData()
 
 function initializeGlobalVariablesFromDOM()
 {
-    k_electrostatic = document.getElementById("k_electrostatic").value;
-    k_elastic = document.getElementById("k_elastic").value;
-    spring_length = document.getElementById("spring_length").value;
-    gravity = document.getElementById("gravity").value;
+    labelLayoutChargeStrength = document.getElementById("labelLayoutChargeStrength").value;
+    labelLayoutLinkStrength = document.getElementById("labelLayoutLinkStrength").value;
+    labelLayoutDistance = document.getElementById("labelLayoutDistance").value;
+
+    graphLayoutChargeStrength = document.getElementById("graphLayoutChargeStrength").value;
+    graphLayoutXStrength = document.getElementById("graphLayoutXStrength").value;
+    graphLayoutYStrength = document.getElementById("graphLayoutYStrength").value;
+    graphLayoutLinkStrength = document.getElementById("graphLayoutLinkStrength").value;
+    graphLayoutDistance = document.getElementById("graphLayoutDistance").value;
+}
+
+function defaultValues()
+{
+    document.getElementById("labelLayoutChargeStrength").value = 50;
+    document.getElementById("labelLayoutLinkStrength").value = 2;
+    document.getElementById("labelLayoutDistance").value = 0;
+
+    document.getElementById("graphLayoutChargeStrength").value = 3000;
+    document.getElementById("graphLayoutXStrength").value = 1;
+    document.getElementById("graphLayoutYStrength").value = 1;
+    document.getElementById("graphLayoutLinkStrength").value = 1;
+    document.getElementById("graphLayoutDistance").value = 50;
 }
 
 function cleanSvgIfDirty()
@@ -170,15 +192,17 @@ function drawGraph()
     });
 
     var labelLayout = d3.forceSimulation(label.nodes)
-        .force("charge", d3.forceManyBody().strength(-50))
-        .force("link", d3.forceLink(label.links).distance(0).strength(2));
+        .force("charge", d3.forceManyBody().strength(-labelLayoutChargeStrength))
+        .force("link", d3.forceLink(label.links).distance(labelLayoutDistance).strength(labelLayoutLinkStrength));
 
     var graphLayout = d3.forceSimulation(filteredNodes)
-        .force("charge", d3.forceManyBody().strength(-3000))
+        // repusion force
+        .force("charge", d3.forceManyBody().strength(-graphLayoutChargeStrength))
+        // atractive force
         .force("center", d3.forceCenter(width / 2, height / 2))
-        .force("x", d3.forceX(width / 2).strength(1))
-        .force("y", d3.forceY(height / 2).strength(1))
-        .force("link", d3.forceLink(filteredEdges).id(function(d) {return d.id; }).distance(50).strength(1))
+        .force("x", d3.forceX(width / 2).strength(graphLayoutXStrength))
+        .force("y", d3.forceY(height / 2).strength(graphLayoutYStrength))
+        .force("link", d3.forceLink(filteredEdges).id(function(d) { return d.id; }).distance(graphLayoutDistance).strength(graphLayoutLinkStrength))
         .on("tick", ticked);
 
     var adjlist = [];

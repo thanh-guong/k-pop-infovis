@@ -23,26 +23,36 @@
         <div class="values-container">
             <p>Write here values</p>
 
-            <label for="k_electrostatic">K electrostatic</label>
-            <input name="values" id="k_electrostatic" type="number" value="5">
+            <label for="labelLayoutChargeStrength">Repulsion between labels</label>
+            <input name="values" id="labelLayoutChargeStrength" type="number" value="50">
 
-            <label for="k_elastic">K elastic</label>
-            <input name="values" id="k_elastic" type="number" value="400">
+            <label for="labelLayoutLinkStrength">Attraction force from center (labels)</label>
+            <input name="values" id="labelLayoutLinkStrength" type="number" value="2">
 
-            <label for="spring_length">Springs length</label>
-            <input name="values" id="spring_length" type="number" value="15">
+            <label for="labelLayoutDistance">Distanza sociale</label>
+            <input name="values" id="labelLayoutDistance" type="number" value="0">
 
-            <label for="gravity">Gravity</label>
-            <input name="values" id="gravity" type="number" value="0.002">
+            <label for="graphLayoutChargeStrength">Repulsion between nodes</label>
+            <input name="values" id="graphLayoutChargeStrength" type="number" value="3000">
 
-            <label for="iterations">Iterations</label>
-            <input name="values" id="iterations" type="number" value="1000">
+            <label for="graphLayoutXStrength">X strength</label>
+            <input name="values" id="graphLayoutXStrength" type="number" value="1">
+
+            <label for="graphLayoutYStrength">Y strength</label>
+            <input name="values" id="graphLayoutYStrength" type="number" value="1">
+
+            <label for="graphLayoutLinkStrength">Attraction force from center (nodes)</label>
+            <input name="values" id="graphLayoutLinkStrength" type="number" value="1">
+
+            <label for="graphLayoutDistance">Distance</label>
+            <input name="values" id="graphLayoutDistance" type="number" value="50">
         </div>
 
         <div class="buttons-container">
 
             <p>Actions</p>
             <input id="draw" type="button" value="Draw Graph" onclick="drawGraph()">
+            <input id="default" type="button" value="Default values" onclick="defaultValues()">
 
         </div>
         <div class="svg-container">
