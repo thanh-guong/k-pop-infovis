@@ -4,6 +4,8 @@ INTERVAL_MS = 300; // milliseconds
 
 let nodes = "";
 let edges = "";
+let filteredNodes = [];
+let filteredEdges = [];
 
 let svg;
 
@@ -15,8 +17,8 @@ let k_elastic;
 let spring_length;
 let gravity;
 
-let width = "1600";
-let height = "800";
+let width = "1200";
+let height = "600";
 
 /**************************
  **************************
@@ -97,98 +99,6 @@ function checkData()
     return -1;       // error state
 }
 
-/*******************
- *******************
- * FORCE FUNCTIONS *
- *******************
- *******************/
-
-function electrostaticRepulsionForAxis(distance_on_axis, total_distance)
-{
-    let first_term = k_electrostatic / (total_distance ** 2);
-    return first_term * (distance_on_axis / total_distance);
-}
-
-function electrostaticRepulsionBetweenTwoNodes(i, j)
-{
-    // distances
-    let x_distance = nodes[i].x - nodes[j].x;
-    x_distance = Math.abs(x_distance);
-    let y_distance = nodes[i].y - nodes[j].y;
-    y_distance = Math.abs(y_distance);
-    let total_distance = Math.sqrt((x_distance ** 2) + (y_distance ** 2));
-
-    // quadratic complexity, i don't need to do this for both i_node and j_node, but only for one (and doesn't matter which one)
-    nodes[i].delta_x += electrostaticRepulsionForAxis(x_distance, total_distance);
-    nodes[i].delta_y += electrostaticRepulsionForAxis(y_distance, total_distance);
-}
-
-function electrostaticRepulsion()
-{
-    // for each couple of nodes
-    for(let i = 0; i < nodes.length; i++)
-    {
-        for(let j = 0; j < nodes.length; j++)
-        {
-            // skip if the node is "himself"
-            if(i === j)
-            {
-                continue;
-            }
-            electrostaticRepulsionBetweenTwoNodes(i, j);
-        }
-    }
-}
-
-function hookeLawForAxis(distance_on_axis, total_distance)
-{
-    let spring_delta = (total_distance - spring_length);
-    return - ( k_elastic * spring_delta * (distance_on_axis / total_distance))
-}
-
-function springForcesBetweenTwoNodes(i, j)
-{
-    // distances
-    let x_distance = nodes[i].x - nodes[j].x;
-    x_distance = Math.abs(x_distance);
-    let y_distance = nodes[i].y - nodes[j].y;
-    y_distance = Math.abs(y_distance);
-    let total_distance = Math.sqrt((x_distance ** 2) + (y_distance ** 2));
-
-    // if x distance is too small
-    if(x_distance < 1 && x_distance > -1)
-    {
-        x_distance = 1;
-    }
-
-    // if y distance is too small
-    if(y_distance < 1 && y_distance > -1)
-    {
-        y_distance = 1;
-    }
-
-    nodes[i].delta_x -= hookeLawForAxis(x_distance, total_distance)
-    nodes[i].delta_y -= hookeLawForAxis(y_distance, total_distance)
-    nodes[j].delta_x += hookeLawForAxis(x_distance, total_distance)
-    nodes[j].delta_y += hookeLawForAxis(y_distance, total_distance)
-}
-
-function springForces()
-{
-    // for each edge
-    for(let i = 0; i < edges.length; i++)
-    {
-        // find related target and source nodes
-        let i_node = nodes.filter(node => node.id === edges[i].source);
-        let j_node = nodes.filter(node => node.id === edges[i].target);
-
-        let i = nodes.indexOf(i_node);
-        let j = nodes.indexOf(j_node);
-
-        springForcesBetweenTwoNodes(i, j);
-    }
-}
-
 function initializeGlobalVariablesFromDOM()
 {
     k_electrostatic = document.getElementById("k_electrostatic").value;
@@ -221,8 +131,16 @@ function drawGraph()
     }
 
     cleanSvgIfDirty();
-    let filteredNodes = filterNodes();
-    let filteredEdges = filterEdges(filteredNodes);
+    if(filteredNodes.length < 1)
+    {
+        filteredNodes = filterNodes();
+    }
+
+    if(filteredEdges.length < 1)
+    {
+        filteredEdges = filterEdges(filteredNodes);
+    }
+
     if(DEBUG)
     {
         console.log("Begin debug block");
@@ -232,6 +150,7 @@ function drawGraph()
         console.log(filteredEdges);
         console.log("End debug block");
     }
+
     initializeGlobalVariablesFromDOM();
 
     var color = d3.scaleOrdinal(d3.schemeCategory10);
