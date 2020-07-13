@@ -84,6 +84,11 @@ function filterNodes()
     return nodes.filter(node => node.type === 'group');
 }
 
+function filterOnlyPersonNodes()
+{
+    return nodes.filter(node => node.type !== 'group' && node.type !== 'label');
+}
+
 function filterEdges(filteredNodes)
 {
     // filter to get only group-group relationships
@@ -330,16 +335,58 @@ function drawGraph()
 
     function focus(d)
     {
-        var index = d3.select(d3.event.target).datum().index;
-        node.style("opacity", function(o) {
+
+        function getGroupMembers(nodeId)
+        {
+            let personNodes = filterOnlyPersonNodes();
+            let groupMembers = [];
+            edges.forEach(edge =>
+            {
+                personNodes.forEach(node =>
+                {
+                    if ((node.id === edge.source && edge.target === nodeId) || (node.id === edge.target && edge.source === nodeId))
+                    {
+                        groupMembers.push(node);
+                    }
+                })
+            });
+
+            return groupMembers;
+        }
+
+        var focusedNode = d3
+            .select(d3.event.target)
+            .datum();
+
+        let index = focusedNode.index;
+
+        // not linked nodes opacity change in 1, others in 0.1
+        node.style("opacity", function(o)
+        {
             return neigh(index, o.index) ? 1 : 0.1;
         });
-        labelNode.attr("display", function(o) {
+
+        // not linked node labels hiding change in display: none, others in display: block
+        labelNode.attr("display", function(o)
+        {
             return neigh(index, o.node.index) ? "block": "none";
         });
-        link.style("opacity", function(o) {
+
+        // not neighbour links opacity change in 0.1, others in 1
+        link.style("opacity", function(o)
+        {
             return o.source.index == index || o.target.index == index ? 1 : 0.1;
         });
+
+        let groupMembers = getGroupMembers(focusedNode.id);
+        groupMembers.forEach(member =>
+        {
+            member.x = focusedNode.x;
+            member.y = focusedNode.y;
+            groupMembers.push(member);
+        });
+        console.log(groupMembers);
+        //graphLayout.nodes().push(groupMembers);
     }
 
     function unfocus()
