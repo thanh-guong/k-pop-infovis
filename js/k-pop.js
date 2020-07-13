@@ -1,4 +1,5 @@
 DEBUG = true;
+
 LABEL_LAYOUT_CHARGE_STRENGTH = 50;
 LABEL_LAYOUT_LINK_STRENGTH = 2;
 LABEL_LAYOUT_DISTANCE = 0;
@@ -46,22 +47,32 @@ function readFile(file)
     return reader;
 }
 
-function readNodes(event)
+function readNodes(file)
 {
-    let reader = readFile(event.target.files[0]);
+    let reader = readFile(file);
     reader.onload = function(e)
     {
         nodes = JSON.parse(reader.result);
     };
 }
 
-function readEdges(event)
+function readEdges(file)
 {
-    let reader = readFile(event.target.files[0]);
+    let reader = readFile(file);
     reader.onload = function(e)
     {
         edges = JSON.parse(reader.result);
     };
+}
+
+function readNodesChangeHandler(event)
+{
+    readNodes(event.target.files[0]);
+}
+
+function readEdgesChangeHandler(event)
+{
+    readEdges(event.target.files[0]);
 }
 
 // may be useful for k-core
@@ -380,6 +391,29 @@ function drawGraph()
     }
 }
 
-document.getElementById('nodes').addEventListener('change', readNodes, false);
-document.getElementById('edges').addEventListener('change', readEdges, false);
+let nodes_from_dom = document.getElementById('nodes');
+let edges_from_dom = document.getElementById('edges');
+
+if (nodes_from_dom.files.length > 0)
+{
+    if(DEBUG)
+    {
+        console.log(nodes_from_dom.files)
+    }
+
+    readNodes(nodes_from_dom.files[0]);
+}
+
+if (edges_from_dom.files.length > 0)
+{
+    if(DEBUG)
+    {
+        console.log(edges_from_dom.files)
+    }
+
+    readEdges(edges_from_dom.files[0]);
+}
+
+nodes_from_dom.addEventListener('change', readNodesChangeHandler, false);
+edges_from_dom.addEventListener('change', readEdgesChangeHandler, false);
 // document.getElementsByName('values').forEach(value => { value.addEventListener('change', drawGraph, false); })
