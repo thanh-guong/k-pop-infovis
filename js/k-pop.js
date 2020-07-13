@@ -27,15 +27,6 @@ let graphLayoutYStrength = 1;
 let graphLayoutLinkStrength	= 1;
 let graphLayoutDistance	= 50;
 
-labelLayoutChargeStrength = LABEL_LAYOUT_CHARGE_STRENGTH;
-labelLayoutLinkStrength = LABEL_LAYOUT_LINK_STRENGTH;
-labelLayoutDistance	= LABEL_LAYOUT_DISTANCE;
-graphLayoutChargeStrength = GRAPH_LAYOUT_CHARGE_STRENGTH;
-graphLayoutXStrength = GRAPH_LAYOUT_X_STRENGTH;
-graphLayoutYStrength = GRAPH_LAYOUT_Y_STRENGTH;
-graphLayoutLinkStrength	= GRAPH_LAYOUT_LINK_STRENGTH;
-graphLayoutDistance	= GRAPH_LAYOUT_DISTANCE;
-
 let repulsionMultiplier = 1;
 let attractionMultiplier = 1;
 
