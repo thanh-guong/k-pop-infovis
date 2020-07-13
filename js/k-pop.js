@@ -55,6 +55,14 @@ function readEdges(event)
     };
 }
 
+// may be useful for k-core
+function howManyLinks(_edges, id)
+{
+    let links = 0;
+    _edges.forEach(edge => { if (edge.id === id) { links++; } });
+    return links;
+}
+
 function filterNodes()
 {
     // filter to get only group nodes
