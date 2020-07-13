@@ -14,11 +14,6 @@ let edges = "";
 let filteredNodes = [];
 let filteredEdges = [];
 
-let svg;
-
-let nodes_displayed;
-let edges_displayed;
-
 let labelLayoutChargeStrength = 50;
 let labelLayoutLinkStrength = 2;
 let labelLayoutDistance	= 0;
@@ -133,8 +128,8 @@ function checkData()
 
 function initializeGlobalVariablesFromDOM()
 {
-    repulsionMultiplier = document.getElementById("repulsionMultiplier").value;
-    attractionMultiplier = document.getElementById("attractionMultiplier").value;
+    repulsionMultiplier = document.getElementById("repulsionMultiplier").value * 0.1;
+    attractionMultiplier = document.getElementById("attractionMultiplier").value * 0.1;
 
     labelLayoutChargeStrength = LABEL_LAYOUT_CHARGE_STRENGTH * repulsionMultiplier;
     labelLayoutLinkStrength = LABEL_LAYOUT_LINK_STRENGTH * attractionMultiplier;
