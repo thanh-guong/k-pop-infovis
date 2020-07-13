@@ -1,6 +1,12 @@
 DEBUG = true;
-STEP_TIME_MS = 100;
-INTERVAL_MS = 300; // milliseconds
+LABEL_LAYOUT_CHARGE_STRENGTH = 50;
+LABEL_LAYOUT_LINK_STRENGTH = 2;
+LABEL_LAYOUT_DISTANCE = 0;
+GRAPH_LAYOUT_CHARGE_STRENGTH = 3000;
+GRAPH_LAYOUT_X_STRENGTH = 1;
+GRAPH_LAYOUT_Y_STRENGTH = 1;
+GRAPH_LAYOUT_LINK_STRENGTH = 1;
+GRAPH_LAYOUT_DISTANCE = 50;
 
 let nodes = "";
 let edges = "";
@@ -12,14 +18,26 @@ let svg;
 let nodes_displayed;
 let edges_displayed;
 
-let labelLayoutChargeStrength	// -50
-let labelLayoutLinkStrength		// 2
-let labelLayoutDistance		    // 0
-let graphLayoutChargeStrength	// -3000
-let graphLayoutXStrength		// 1
-let graphLayoutYStrength		// 1
-let graphLayoutLinkStrength		// 1
-let graphLayoutDistance		    // 50
+let labelLayoutChargeStrength = 50;
+let labelLayoutLinkStrength = 2;
+let labelLayoutDistance	= 0;
+let graphLayoutChargeStrength = 3000;
+let graphLayoutXStrength = 1;
+let graphLayoutYStrength = 1;
+let graphLayoutLinkStrength	= 1;
+let graphLayoutDistance	= 50;
+
+labelLayoutChargeStrength = LABEL_LAYOUT_CHARGE_STRENGTH;
+labelLayoutLinkStrength = LABEL_LAYOUT_LINK_STRENGTH;
+labelLayoutDistance	= LABEL_LAYOUT_DISTANCE;
+graphLayoutChargeStrength = GRAPH_LAYOUT_CHARGE_STRENGTH;
+graphLayoutXStrength = GRAPH_LAYOUT_X_STRENGTH;
+graphLayoutYStrength = GRAPH_LAYOUT_Y_STRENGTH;
+graphLayoutLinkStrength	= GRAPH_LAYOUT_LINK_STRENGTH;
+graphLayoutDistance	= GRAPH_LAYOUT_DISTANCE;
+
+let repulsionMultiplier = 1;
+let attractionMultiplier = 1;
 
 let width = "1200";
 let height = "600";
@@ -113,28 +131,35 @@ function checkData()
 
 function initializeGlobalVariablesFromDOM()
 {
-    labelLayoutChargeStrength = document.getElementById("labelLayoutChargeStrength").value;
-    labelLayoutLinkStrength = document.getElementById("labelLayoutLinkStrength").value;
-    labelLayoutDistance = document.getElementById("labelLayoutDistance").value;
+    repulsionMultiplier = document.getElementById("repulsionMultiplier").value;
+    attractionMultiplier = document.getElementById("attractionMultiplier").value;
 
-    graphLayoutChargeStrength = document.getElementById("graphLayoutChargeStrength").value;
-    graphLayoutXStrength = document.getElementById("graphLayoutXStrength").value;
-    graphLayoutYStrength = document.getElementById("graphLayoutYStrength").value;
-    graphLayoutLinkStrength = document.getElementById("graphLayoutLinkStrength").value;
-    graphLayoutDistance = document.getElementById("graphLayoutDistance").value;
+    labelLayoutChargeStrength = LABEL_LAYOUT_CHARGE_STRENGTH * repulsionMultiplier;
+    labelLayoutLinkStrength = LABEL_LAYOUT_LINK_STRENGTH * attractionMultiplier;
+    labelLayoutDistance	= LABEL_LAYOUT_DISTANCE;
+    graphLayoutChargeStrength = GRAPH_LAYOUT_CHARGE_STRENGTH * repulsionMultiplier;
+    graphLayoutXStrength = GRAPH_LAYOUT_X_STRENGTH;
+    graphLayoutYStrength = GRAPH_LAYOUT_Y_STRENGTH;
+    graphLayoutLinkStrength	= GRAPH_LAYOUT_LINK_STRENGTH * attractionMultiplier;
+    graphLayoutDistance	= GRAPH_LAYOUT_DISTANCE;
 }
 
 function defaultValues()
 {
-    document.getElementById("labelLayoutChargeStrength").value = 50;
-    document.getElementById("labelLayoutLinkStrength").value = 2;
-    document.getElementById("labelLayoutDistance").value = 0;
+    labelLayoutChargeStrength = LABEL_LAYOUT_CHARGE_STRENGTH;
+    labelLayoutLinkStrength = LABEL_LAYOUT_LINK_STRENGTH;
+    labelLayoutDistance	= LABEL_LAYOUT_DISTANCE;
+    graphLayoutChargeStrength = GRAPH_LAYOUT_CHARGE_STRENGTH;
+    graphLayoutXStrength = GRAPH_LAYOUT_X_STRENGTH;
+    graphLayoutYStrength = GRAPH_LAYOUT_Y_STRENGTH;
+    graphLayoutLinkStrength	= GRAPH_LAYOUT_LINK_STRENGTH;
+    graphLayoutDistance	= GRAPH_LAYOUT_DISTANCE;
 
-    document.getElementById("graphLayoutChargeStrength").value = 3000;
-    document.getElementById("graphLayoutXStrength").value = 1;
-    document.getElementById("graphLayoutYStrength").value = 1;
-    document.getElementById("graphLayoutLinkStrength").value = 1;
-    document.getElementById("graphLayoutDistance").value = 50;
+    repulsionMultiplier = 1;
+    attractionMultiplier = 1;
+
+    document.getElementById("repulsionMultiplier").value = 1;
+    document.getElementById("attractionMultiplier").value = 1;
 }
 
 function cleanSvgIfDirty()
