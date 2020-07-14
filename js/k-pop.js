@@ -1,4 +1,5 @@
 DEBUG = true;
+
 LABEL_LAYOUT_CHARGE_STRENGTH = 50;
 LABEL_LAYOUT_LINK_STRENGTH = 2;
 LABEL_LAYOUT_DISTANCE = 0;
@@ -13,11 +14,6 @@ let edges = "";
 let filteredNodes = [];
 let filteredEdges = [];
 
-let svg;
-
-let nodes_displayed;
-let edges_displayed;
-
 let labelLayoutChargeStrength = 50;
 let labelLayoutLinkStrength = 2;
 let labelLayoutDistance	= 0;
@@ -26,15 +22,6 @@ let graphLayoutXStrength = 1;
 let graphLayoutYStrength = 1;
 let graphLayoutLinkStrength	= 1;
 let graphLayoutDistance	= 50;
-
-labelLayoutChargeStrength = LABEL_LAYOUT_CHARGE_STRENGTH;
-labelLayoutLinkStrength = LABEL_LAYOUT_LINK_STRENGTH;
-labelLayoutDistance	= LABEL_LAYOUT_DISTANCE;
-graphLayoutChargeStrength = GRAPH_LAYOUT_CHARGE_STRENGTH;
-graphLayoutXStrength = GRAPH_LAYOUT_X_STRENGTH;
-graphLayoutYStrength = GRAPH_LAYOUT_Y_STRENGTH;
-graphLayoutLinkStrength	= GRAPH_LAYOUT_LINK_STRENGTH;
-graphLayoutDistance	= GRAPH_LAYOUT_DISTANCE;
 
 let repulsionMultiplier = 1;
 let attractionMultiplier = 1;
@@ -55,22 +42,32 @@ function readFile(file)
     return reader;
 }
 
-function readNodes(event)
+function readNodes(file)
 {
-    let reader = readFile(event.target.files[0]);
+    let reader = readFile(file);
     reader.onload = function(e)
     {
         nodes = JSON.parse(reader.result);
     };
 }
 
-function readEdges(event)
+function readEdges(file)
 {
-    let reader = readFile(event.target.files[0]);
+    let reader = readFile(file);
     reader.onload = function(e)
     {
         edges = JSON.parse(reader.result);
     };
+}
+
+function readNodesChangeHandler(event)
+{
+    readNodes(event.target.files[0]);
+}
+
+function readEdgesChangeHandler(event)
+{
+    readEdges(event.target.files[0]);
 }
 
 // may be useful for k-core
@@ -85,6 +82,11 @@ function filterNodes()
 {
     // filter to get only group nodes
     return nodes.filter(node => node.type === 'group');
+}
+
+function filterOnlyPersonNodes()
+{
+    return nodes.filter(node => node.type !== 'group' && node.type !== 'label');
 }
 
 function filterEdges(filteredNodes)
@@ -131,8 +133,8 @@ function checkData()
 
 function initializeGlobalVariablesFromDOM()
 {
-    repulsionMultiplier = document.getElementById("repulsionMultiplier").value;
-    attractionMultiplier = document.getElementById("attractionMultiplier").value;
+    repulsionMultiplier = document.getElementById("repulsionMultiplier").value * 0.1;
+    attractionMultiplier = document.getElementById("attractionMultiplier").value * 0.1;
 
     labelLayoutChargeStrength = LABEL_LAYOUT_CHARGE_STRENGTH * repulsionMultiplier;
     labelLayoutLinkStrength = LABEL_LAYOUT_LINK_STRENGTH * attractionMultiplier;
@@ -333,16 +335,58 @@ function drawGraph()
 
     function focus(d)
     {
-        var index = d3.select(d3.event.target).datum().index;
-        node.style("opacity", function(o) {
+
+        function getGroupMembers(nodeId)
+        {
+            let personNodes = filterOnlyPersonNodes();
+            let groupMembers = [];
+            edges.forEach(edge =>
+            {
+                personNodes.forEach(node =>
+                {
+                    if ((node.id === edge.source && edge.target === nodeId) || (node.id === edge.target && edge.source === nodeId))
+                    {
+                        groupMembers.push(node);
+                    }
+                })
+            });
+
+            return groupMembers;
+        }
+
+        var focusedNode = d3
+            .select(d3.event.target)
+            .datum();
+
+        let index = focusedNode.index;
+
+        // not linked nodes opacity change in 1, others in 0.1
+        node.style("opacity", function(o)
+        {
             return neigh(index, o.index) ? 1 : 0.1;
         });
-        labelNode.attr("display", function(o) {
+
+        // not linked node labels hiding change in display: none, others in display: block
+        labelNode.attr("display", function(o)
+        {
             return neigh(index, o.node.index) ? "block": "none";
         });
-        link.style("opacity", function(o) {
+
+        // not neighbour links opacity change in 0.1, others in 1
+        link.style("opacity", function(o)
+        {
             return o.source.index == index || o.target.index == index ? 1 : 0.1;
         });
+
+        let groupMembers = getGroupMembers(focusedNode.id);
+        groupMembers.forEach(member =>
+        {
+            member.x = focusedNode.x;
+            member.y = focusedNode.y;
+            groupMembers.push(member);
+        });
+        console.log(groupMembers);
+        //graphLayout.nodes().push(groupMembers);
     }
 
     function unfocus()
@@ -389,6 +433,29 @@ function drawGraph()
     }
 }
 
-document.getElementById('nodes').addEventListener('change', readNodes, false);
-document.getElementById('edges').addEventListener('change', readEdges, false);
+let nodes_from_dom = document.getElementById('nodes');
+let edges_from_dom = document.getElementById('edges');
+
+if (nodes_from_dom.files.length > 0)
+{
+    if(DEBUG)
+    {
+        console.log(nodes_from_dom.files)
+    }
+
+    readNodes(nodes_from_dom.files[0]);
+}
+
+if (edges_from_dom.files.length > 0)
+{
+    if(DEBUG)
+    {
+        console.log(edges_from_dom.files)
+    }
+
+    readEdges(edges_from_dom.files[0]);
+}
+
+nodes_from_dom.addEventListener('change', readNodesChangeHandler, false);
+edges_from_dom.addEventListener('change', readEdgesChangeHandler, false);
 // document.getElementsByName('values').forEach(value => { value.addEventListener('change', drawGraph, false); })
