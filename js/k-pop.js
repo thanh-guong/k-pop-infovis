@@ -70,12 +70,48 @@ function readEdgesChangeHandler(event)
     readEdges(event.target.files[0]);
 }
 
-// may be useful for k-core
-function howManyLinks(_edges, id)
+function removeIsolatedNodesAndRelatedEdges()
 {
-    let links = 0;
-    _edges.forEach(edge => { if (edge.id === id) { links++; } });
-    return links;
+    let tempNodes = [];
+    let tempEdges = [];
+
+    filteredNodes.forEach
+    ( node =>
+        {
+            if (!isolatedNode(filteredEdges, node.id))
+            {
+                tempNodes.push(node);
+            }
+        }
+    );
+
+    if (DEBUG)
+    {
+        console.log(tempNodes)
+        console.log(filteredEdges)
+    }
+
+    filteredNodes = tempNodes;
+
+    filteredEdges.forEach
+    (
+        edge =>
+        {
+            if (((filteredNodes.filter(node => edge.source === node.id).length > 0) && (filteredNodes.filter(node => edge.target === node.id).length > 0)))
+            {
+                tempEdges.push(edge)
+            }
+        }
+    );
+
+    filteredEdges = tempEdges;
+}
+
+function isolatedNode(_edges, id)
+{
+    let result = true;
+    _edges.forEach(edge => { if (edge.source === id || edge.target === id) { result = false; } });
+    return result;
 }
 
 function filterNodes()
@@ -157,11 +193,11 @@ function defaultValues()
     graphLayoutLinkStrength	= GRAPH_LAYOUT_LINK_STRENGTH;
     graphLayoutDistance	= GRAPH_LAYOUT_DISTANCE;
 
-    repulsionMultiplier = 1;
-    attractionMultiplier = 1;
+    repulsionMultiplier = 10;
+    attractionMultiplier = 10;
 
-    document.getElementById("repulsionMultiplier").value = 1;
-    document.getElementById("attractionMultiplier").value = 1;
+    document.getElementById("repulsionMultiplier").value = 10;
+    document.getElementById("attractionMultiplier").value = 10;
 }
 
 function cleanSvgIfDirty()
@@ -197,6 +233,18 @@ function drawGraph()
     {
         filteredEdges = filterEdges(filteredNodes);
     }
+
+    if(DEBUG)
+    {
+        console.log("Begin debug block");
+        console.log(nodes);
+        console.log(edges);
+        console.log(filteredNodes);
+        console.log(filteredEdges);
+        console.log("End debug block");
+    }
+
+    removeIsolatedNodesAndRelatedEdges();
 
     if(DEBUG)
     {

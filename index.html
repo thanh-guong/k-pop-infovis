@@ -11,7 +11,7 @@
 
     <div class="container">
         <div class="upload-container">
-            <p>Drop here datasets in JSON format</p>
+            <p>Insert here datasets in JSON format from your File System</p>
 
             <label for="nodes">Nodes</label>
             <input id="nodes" type="file" accept="application/json">
@@ -28,13 +28,14 @@
 
             <label for="attractionMultiplier">Attraction multiplier [1, 20]</label>
             <input name="values" id="attractionMultiplier" type="number" max="20" value="10">
+
+            <input id="default" type="button" value="Default values" onclick="defaultValues()">
         </div>
 
         <div class="buttons-container">
 
             <p>Actions</p>
             <input id="draw" type="button" value="Draw Graph" onclick="drawGraph()">
-            <input id="default" type="button" value="Default values" onclick="defaultValues()">
 
         </div>
         <div class="svg-container">
