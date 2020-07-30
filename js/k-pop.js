@@ -224,6 +224,21 @@ function drawGraph()
     }
 
     cleanSvgIfDirty();
+
+    if(DEBUG)
+    {
+        console.log("Begin debug block");
+        console.log("Nodes");
+        console.log(nodes);
+        console.log("Edges");
+        console.log(edges);
+        console.log("Filtered nodes");
+        console.log(filteredNodes);
+        console.log("Filtered edges");
+        console.log(filteredEdges);
+        console.log("End debug block");
+    }
+
     if(filteredNodes.length < 1)
     {
         filteredNodes = filterNodes();
@@ -232,28 +247,7 @@ function drawGraph()
     if(filteredEdges.length < 1)
     {
         filteredEdges = filterEdges(filteredNodes);
-    }
-
-    if(DEBUG)
-    {
-        console.log("Begin debug block");
-        console.log(nodes);
-        console.log(edges);
-        console.log(filteredNodes);
-        console.log(filteredEdges);
-        console.log("End debug block");
-    }
-
-    removeIsolatedNodesAndRelatedEdges();
-
-    if(DEBUG)
-    {
-        console.log("Begin debug block");
-        console.log(nodes);
-        console.log(edges);
-        console.log(filteredNodes);
-        console.log(filteredEdges);
-        console.log("End debug block");
+        removeIsolatedNodesAndRelatedEdges();
     }
 
     initializeGlobalVariablesFromDOM();

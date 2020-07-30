@@ -3,47 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/sidenav.css">
+    <link rel="stylesheet" href="css/topnav.css">
+
+    <!-- hamburger menu -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
     <title>K-Pop InfoVis project - Marte Valerio Falcone</title>
 
 </head>
 <body>
     <script src="https://d3js.org/d3.v5.min.js"></script>
 
-    <div class="container">
-        <div class="upload-container">
-            <p>Insert here datasets in JSON format from your File System</p>
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <p>Dataset</p>
+        <label for="nodes">Nodes</label>
+        <input style="color: #818181;" id="nodes" type="file" accept="application/json">
 
-            <label for="nodes">Nodes</label>
-            <input id="nodes" type="file" accept="application/json">
+        <label for="edges">Edges</label>
+        <input style="color: #818181;" id="edges" type="file" accept="application/json">
 
-            <label for="edges">Edges</label>
-            <input id="edges" type="file" accept="application/json">
-        </div>
+        <p>Graph force multipliers</p>
 
-        <div class="values-container">
-            <p>Write here values</p>
+        <label for="repulsionMultiplier">Repulsion multiplier [1, 20]</label>
+        <input name="values" id="repulsionMultiplier" type="number" max="20" value="10">
 
-            <label for="repulsionMultiplier">Repulsion multiplier [1, 20]</label>
-            <input name="values" id="repulsionMultiplier" type="number" max="20" value="10">
+        <label for="attractionMultiplier">Attraction multiplier [1, 20]</label>
+        <input name="values" id="attractionMultiplier" type="number" max="20" value="10">
 
-            <label for="attractionMultiplier">Attraction multiplier [1, 20]</label>
-            <input name="values" id="attractionMultiplier" type="number" max="20" value="10">
+        <input id="default" type="button" value="Default values" onclick="defaultValues()">
 
-            <input id="default" type="button" value="Default values" onclick="defaultValues()">
-        </div>
+        <p>Actions</p>
+        <input id="draw" type="button" value="Draw Graph" onclick="drawGraph()">
+    </div>
 
-        <div class="buttons-container">
+    <!-- Use any element to open the sidenav -->
+    <div class="topnav">
+        <a href="javascript:void(0);" class="icon" onclick="openNav()">
+            <i class="fa fa-bars"></i>
+        </a>
+        <a>K pop infovis</a>
+    </div>
 
-            <p>Actions</p>
-            <input id="draw" type="button" value="Draw Graph" onclick="drawGraph()">
-
-        </div>
-        <div class="svg-container">
-            <svg id="viz"></svg>
-        </div>
-
+    <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
+    <div class="svg-container" id="main" onclick="closeNav()">
+        <svg id="viz"></svg>
     </div>
 
     <script src="js/k-pop.js"></script>
+    <script src="js/sidenav.js"></script>
 </body>
 </html>

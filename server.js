@@ -34,6 +34,17 @@ fs.readFile('js/k-pop.js', function (err, js) {
     });
 });
 
+fs.readFile('js/sidenav.js', function (err, js) {
+    if (err) {
+        throw err;
+    }
+    app.get('/js/sidenav.js', function (req, res) {
+        res.writeHeader(200, {"Content-Type": "text/javascript"});
+        res.write(js);
+        res.end();
+    });
+});
+
 /***
  * css route
  */
@@ -42,6 +53,28 @@ fs.readFile('css/index.css', function (err, js) {
         throw err;
     }
     app.get('/css/index.css', function (req, res) {
+        res.writeHeader(200, {"Content-Type": "text/css"});
+        res.write(js);
+        res.end();
+    });
+});
+
+fs.readFile('css/sidenav.css', function (err, js) {
+    if (err) {
+        throw err;
+    }
+    app.get('/css/sidenav.css', function (req, res) {
+        res.writeHeader(200, {"Content-Type": "text/css"});
+        res.write(js);
+        res.end();
+    });
+});
+
+fs.readFile('css/topnav.css', function (err, js) {
+    if (err) {
+        throw err;
+    }
+    app.get('/css/topnav.css', function (req, res) {
         res.writeHeader(200, {"Content-Type": "text/css"});
         res.write(js);
         res.end();

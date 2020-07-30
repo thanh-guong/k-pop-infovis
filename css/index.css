@@ -38,4 +38,13 @@
     text-align: center;
 }
 
+svg
+{
+    display: block;
+    margin: auto;
+}
 
+.svg-container
+{
+    height: 100%;
+}
