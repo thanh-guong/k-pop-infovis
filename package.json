@@ -4,7 +4,7 @@
   "description": "This project is for University purpose: Information Visualization course in Roma Tre University requires a project to be done, and this is mine.",
   "main": "server.js",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.3"
   },
   "devDependencies": {},
   "scripts": {
